@@ -7,21 +7,6 @@ local TextChatService = game:GetService("TextChatService")
 
 local LocalPlayer = Players.LocalPlayer
 
--- Sound Effects
-local function playSound(soundId)
-    local sound = Instance.new("Sound")
-    sound.SoundId = "rbxassetid://" .. soundId
-    sound.Parent = SoundService
-    sound:Play()
-    sound.Ended:Connect(function()
-        sound:Destroy()
-    end)
-end
-
--- Play initial sound
-playSound("2865227271")
-
--- GUI Creation
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "SuperRingPartsGUI"
 ScreenGui.ResetOnSpawn = false
