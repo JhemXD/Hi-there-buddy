@@ -1,0 +1,57 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "HealthRegenGui"
+screenGui.Parent = PlayerGui
+
+-- Create Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 150)
+frame.Position = UDim2.new(0.5, -100, 0.5, -75)
+frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+frame.Parent = screenGui
+
+-- Create Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(0, 180, 0, 50)
+title.Position = UDim2.new(0.5, -90, 0, 10)
+title.Text = "Health Control by JhemXD"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1
+title.Parent = frame
+
+-- Create Button
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(0, 180, 0, 50)
+button.Position = UDim2.new(0.5, -90, 0.5, 10)
+button.Text = "Toggle Health Regen"
+button.Parent = frame
+
+-- Health Regeneration Script
+local regenEnabled = false
+
+local function toggleHealthRegen()
+    regenEnabled = not regenEnabled
+    if regenEnabled then
+        button.Text = "Health Regen: ON"
+    else
+        button.Text = "Health Regen: OFF"
+    end
+end
+
+button.MouseButton1Click:Connect(toggleHealthRegen)
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    if regenEnabled then
+        local character = LocalPlayer.Character
+        if character then
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.Health = humanoid.MaxHealth
+            end
+        end
+    end
+end)
