@@ -11,8 +11,8 @@ screenGui.Parent = PlayerGui
 
 -- Create Frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 200, 0, 200)
-frame.Position = UDim2.new(0.5, -100, 0.5, -100)
+frame.Size = UDim2.new(0, 200, 0, 250)
+frame.Position = UDim2.new(0.5, -100, 0.5, -125)
 frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 frame.Parent = screenGui
 
@@ -54,10 +54,28 @@ slider.Text = "Regen Rate: 0.1"
 slider.Visible = false
 slider.Parent = frame
 
+-- Create Set Max Health Button
+local setMaxHealthButton = Instance.new("TextButton")
+setMaxHealthButton.Size = UDim2.new(0, 180, 0, 30)
+setMaxHealthButton.Position = UDim2.new(0.5, -90, 0.9, 10)
+setMaxHealthButton.Text = "Set Max Health"
+setMaxHealthButton.Parent = frame
+
+-- Create Health Status Display
+local healthStatus = Instance.new("TextLabel")
+healthStatus.Size = UDim2.new(0, 180, 0, 30)
+healthStatus.Position = UDim2.new(0.5, -90, 1.1, 10)
+healthStatus.Text = "Health: 0/0"
+healthStatus.TextColor3 = Color3.fromRGB(255, 255, 255)
+healthStatus.BackgroundTransparency = 1
+healthStatus.Visible = false
+healthStatus.Parent = frame
+
 -- Health Regeneration Script
 local regenEnabled = false
 local instantRegen = false
 local regenRate = 0.1
+local displayHealthStatus = false
 
 local function toggleHealthRegen()
     regenEnabled = not regenEnabled
@@ -80,8 +98,33 @@ local function instantRegenFunc()
     end
 end
 
+local function setMaxHealth()
+    local character = LocalPlayer.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            local maxHealth = tonumber(slider.Text:match("%d+%.?%d*"))
+            if maxHealth then
+                humanoid.MaxHealth = maxHealth
+                humanoid.Health = maxHealth
+            end
+        end
+    end
+end
+
+local function updateHealthStatus()
+    local character = LocalPlayer.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid and displayHealthStatus then
+            healthStatus.Text = "Health: " .. math.floor(humanoid.Health) .. "/" .. humanoid.MaxHealth
+        end
+    end
+end
+
 instantRegenButton.MouseButton1Click:Connect(instantRegenFunc)
 regenButton.MouseButton1Click:Connect(toggleHealthRegen)
+setMaxHealthButton.MouseButton1Click:Connect(setMaxHealth)
 
 RunService.Heartbeat:Connect(function()
     if regenEnabled then
@@ -93,6 +136,7 @@ RunService.Heartbeat:Connect(function()
             end
         end
     end
+    updateHealthStatus()
 end)
 
 slider.FocusLost:Connect(function()
@@ -155,7 +199,7 @@ minimizeButton.MouseButton1Click:Connect(function()
             end
         end
     else
-        frame:TweenSize(UDim2.new(0, 200, 0, 200), "Out", "Quad", 0.3, true)
+        frame:TweenSize(UDim2.new(0, 200, 0, 250), "Out", "Quad", 0.3, true)
         minimizeButton.Text = "-"
         for _, child in ipairs(frame:GetChildren()) do
             child.Visible = true
