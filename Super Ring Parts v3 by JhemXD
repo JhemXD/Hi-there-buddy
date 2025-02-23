@@ -73,15 +73,6 @@ local function ForcePart(v)
 	end
 end
 
-
-
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local SoundService = game:GetService("SoundService")
-local StarterGui = game:GetService("StarterGui")
-local TextChatService = game:GetService("TextChatService")
-
 local LocalPlayer = Players.LocalPlayer
 
 -- Sound Effects
@@ -100,7 +91,7 @@ playSound("2865227271")
 
 --Properties:
 local SuperRingPartV1 = Instance.new("ScreenGui")
-SuperRingPartV1.Name = "SuperRingPartV1"
+SuperRingPartV1.Name = "SuperRingPartV3"
 SuperRingPartV1.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 SuperRingPartV1.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 SuperRingPartV1.ResetOnSpawn = false
@@ -312,8 +303,8 @@ end
 
 local radius = 50
 local height = 100
-local rotationSpeed = 1
-local attractionStrength = 1000
+local rotationSpeed = 100
+local attractionStrength = 1000000
 local ringPartsEnabled = false
 
 local function RetainPart(Part)
@@ -385,40 +376,13 @@ ToggleButton.MouseButton1Click:Connect(function()
 end)
 
 DecreaseRadius.MouseButton1Click:Connect(function()
-	radius = math.max(1, radius - 2)
+	radius = math.max(1, radius - 5)
 	RadiusDisplay.Text = "Radius: " .. radius
 	playSound("12221967")
 end)
 
 IncreaseRadius.MouseButton1Click:Connect(function()
-	radius = math.min(1000, radius + 2)
+	radius = math.min(1000, radius + 5)
 	RadiusDisplay.Text = "Radius: " .. radius
 	playSound("12221967")
 end)
-
--- Get player thumbnail
-local userId = Players:GetUserIdFromNameAsync("Robloxlukasgames")
-local thumbType = Enum.ThumbnailType.HeadShot
-local thumbSize = Enum.ThumbnailSize.Size420x420
-local content, isReady = Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
-
-StarterGui:SetCore("SendNotification", {
-	Title = "Super ring parts V1",
-	Text = "enjoy",
-	Icon = content,
-	Duration = 5
-})
-
--- Chat message (Updated for new chat system)
-local function SendChatMessage(message)
-	if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
-		local textChannel = TextChatService.TextChannels.RBXGeneral
-		textChannel:SendAsync(message)
-	else
-		game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
-	end
-end
-
--- Send the chat message
-SendChatMessage("Super Ring Parts V1 By Rip_IKASI")
-SendChatMessage("ðŸ˜‡Thank for using my Script, This is the latest version. â˜ ï¸â˜ ï¸â˜ ï¸Now, Let's Play Some Player!!!â˜ ï¸â˜ ï¸â˜ ï¸. Rip_IKASI")
