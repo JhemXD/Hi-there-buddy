@@ -11,8 +11,8 @@ screenGui.Parent = PlayerGui
 
 -- Create Frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 200, 0, 150)
-frame.Position = UDim2.new(0.5, -100, 0.5, -75)
+frame.Size = UDim2.new(0, 200, 0, 200)
+frame.Position = UDim2.new(0.5, -100, 0.5, -100)
 frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 frame.Parent = screenGui
 
@@ -32,26 +32,56 @@ minimizeButton.Position = UDim2.new(1, -25, 0, 5)
 minimizeButton.Text = "-"
 minimizeButton.Parent = frame
 
--- Create Button
-local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 180, 0, 50)
-button.Position = UDim2.new(0.5, -90, 0.5, 10)
-button.Text = "Toggle Health Regen"
-button.Parent = frame
+-- Create Instant Regen Button
+local instantRegenButton = Instance.new("TextButton")
+instantRegenButton.Size = UDim2.new(0, 180, 0, 50)
+instantRegenButton.Position = UDim2.new(0.5, -90, 0.3, 10)
+instantRegenButton.Text = "Instant Regen"
+instantRegenButton.Parent = frame
+
+-- Create Regen Button
+local regenButton = Instance.new("TextButton")
+regenButton.Size = UDim2.new(0, 180, 0, 50)
+regenButton.Position = UDim2.new(0.5, -90, 0.5, 10)
+regenButton.Text = "Regen"
+regenButton.Parent = frame
+
+-- Create Slider for Regen Rate
+local slider = Instance.new("TextBox")
+slider.Size = UDim2.new(0, 180, 0, 50)
+slider.Position = UDim2.new(0.5, -90, 0.7, 10)
+slider.Text = "Regen Rate: 0.1"
+slider.Visible = false
+slider.Parent = frame
 
 -- Health Regeneration Script
 local regenEnabled = false
+local instantRegen = false
+local regenRate = 0.1
 
 local function toggleHealthRegen()
     regenEnabled = not regenEnabled
     if regenEnabled then
-        button.Text = "Health Regen: ON"
+        regenButton.Text = "Regen: ON"
+        slider.Visible = true
     else
-        button.Text = "Health Regen: OFF"
+        regenButton.Text = "Regen: OFF"
+        slider.Visible = false
     end
 end
 
-button.MouseButton1Click:Connect(toggleHealthRegen)
+local function instantRegenFunc()
+    local character = LocalPlayer.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.Health = humanoid.MaxHealth
+        end
+    end
+end
+
+instantRegenButton.MouseButton1Click:Connect(instantRegenFunc)
+regenButton.MouseButton1Click:Connect(toggleHealthRegen)
 
 RunService.Heartbeat:Connect(function()
     if regenEnabled then
@@ -59,9 +89,19 @@ RunService.Heartbeat:Connect(function()
         if character then
             local humanoid = character:FindFirstChildOfClass("Humanoid")
             if humanoid then
-                humanoid.Health = humanoid.MaxHealth
+                humanoid.Health = math.min(humanoid.Health + regenRate, humanoid.MaxHealth)
             end
         end
+    end
+end)
+
+slider.FocusLost:Connect(function()
+    local rate = tonumber(slider.Text:match("%d+%.?%d*"))
+    if rate then
+        regenRate = rate
+        slider.Text = "Regen Rate: " .. tostring(rate)
+    else
+        slider.Text = "Regen Rate: " .. tostring(regenRate)
     end
 end)
 
@@ -109,12 +149,16 @@ minimizeButton.MouseButton1Click:Connect(function()
     if minimized then
         frame:TweenSize(UDim2.new(0, 200, 0, 50), "Out", "Quad", 0.3, true)
         minimizeButton.Text = "+"
-        button.Visible = false
-        title.Visible = false
+        for _, child in ipairs(frame:GetChildren()) do
+            if child ~= minimizeButton then
+                child.Visible = false
+            end
+        end
     else
-        frame:TweenSize(UDim2.new(0, 200, 0, 150), "Out", "Quad", 0.3, true)
+        frame:TweenSize(UDim2.new(0, 200, 0, 200), "Out", "Quad", 0.3, true)
         minimizeButton.Text = "-"
-        button.Visible = true
-        title.Visible = true
+        for _, child in ipairs(frame:GetChildren()) do
+            child.Visible = true
+        end
     end
 end)
