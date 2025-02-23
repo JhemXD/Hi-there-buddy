@@ -9,49 +9,56 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "HealthRegenGui"
 screenGui.Parent = PlayerGui
 
+-- Create Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 300)
+frame.Position = UDim2.new(0.5, -100, 0.5, -150)
+frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+frame.Parent = screenGui
+
 -- Create Scrollable Frame
 local scrollFrame = Instance.new("ScrollingFrame")
-scrollFrame.Size = UDim2.new(0, 200, 0, 250)
-scrollFrame.Position = UDim2.new(0.5, -100, 0.5, -125)
+scrollFrame.Size = UDim2.new(1, 0, 1, -50)
+scrollFrame.Position = UDim2.new(0, 0, 0, 50)
 scrollFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 scrollFrame.CanvasSize = UDim2.new(0, 180, 0, 600) -- Adjust CanvasSize based on content
 scrollFrame.ScrollBarThickness = 10
-scrollFrame.Parent = screenGui
+scrollFrame.Parent = frame
 
 -- Create Title
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(0, 180, 0, 50)
-title.Position = UDim2.new(0.5, -90, 0, 10)
+title.Position = UDim2.new(0.5, -90, 0, -40)
 title.Text = "Health Control by JhemXD"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.BackgroundTransparency = 1
-title.Parent = scrollFrame
+title.Parent = frame
 
 -- Create Minimize Button
 local minimizeButton = Instance.new("TextButton")
 minimizeButton.Size = UDim2.new(0, 20, 0, 20)
 minimizeButton.Position = UDim2.new(1, -25, 0, 5)
 minimizeButton.Text = "-"
-minimizeButton.Parent = scrollFrame
+minimizeButton.Parent = frame
 
 -- Create Instant Regen Button
 local instantRegenButton = Instance.new("TextButton")
 instantRegenButton.Size = UDim2.new(0, 180, 0, 50)
-instantRegenButton.Position = UDim2.new(0.5, -90, 0.3, 10)
+instantRegenButton.Position = UDim2.new(0.5, -90, 0.1, 10)
 instantRegenButton.Text = "Instant Regen"
 instantRegenButton.Parent = scrollFrame
 
 -- Create Regen Button
 local regenButton = Instance.new("TextButton")
 regenButton.Size = UDim2.new(0, 180, 0, 50)
-regenButton.Position = UDim2.new(0.5, -90, 0.5, 10)
+regenButton.Position = UDim2.new(0.5, -90, 0.3, 10)
 regenButton.Text = "Regen"
 regenButton.Parent = scrollFrame
 
 -- Create Slider for Regen Rate
 local slider = Instance.new("TextBox")
 slider.Size = UDim2.new(0, 180, 0, 50)
-slider.Position = UDim2.new(0.5, -90, 0.7, 10)
+slider.Position = UDim2.new(0.5, -90, 0.5, 10)
 slider.Text = "Regen Rate: 0.1"
 slider.Visible = false
 slider.Parent = scrollFrame
@@ -59,31 +66,31 @@ slider.Parent = scrollFrame
 -- Create Set Max Health Button and Input
 local setMaxHealthInput = Instance.new("TextBox")
 setMaxHealthInput.Size = UDim2.new(0, 180, 0, 30)
-setMaxHealthInput.Position = UDim2.new(0.5, -90, 0.9, 10)
+setMaxHealthInput.Position = UDim2.new(0.5, -90, 0.7, 10)
 setMaxHealthInput.PlaceholderText = "Enter Max Health"
 setMaxHealthInput.Parent = scrollFrame
 
 local setMaxHealthButton = Instance.new("TextButton")
 setMaxHealthButton.Size = UDim2.new(0, 180, 0, 30)
-setMaxHealthButton.Position = UDim2.new(0.5, -90, 1.1, 10)
+setMaxHealthButton.Position = UDim2.new(0.5, -90, 0.8, 10)
 setMaxHealthButton.Text = "Set Max Health"
 setMaxHealthButton.Parent = scrollFrame
 
 -- Create Health Status Toggle and Display
 local healthStatusToggle = Instance.new("TextButton")
 healthStatusToggle.Size = UDim2.new(0, 180, 0, 30)
-healthStatusToggle.Position = UDim2.new(0.5, -90, 1.3, 10)
+healthStatusToggle.Position = UDim2.new(0.5, -90, 0.9, 10)
 healthStatusToggle.Text = "Show Health Status"
 healthStatusToggle.Parent = scrollFrame
 
 local healthStatusDisplay = Instance.new("TextLabel")
 healthStatusDisplay.Size = UDim2.new(0, 180, 0, 30)
-healthStatusDisplay.Position = UDim2.new(0.5, -90, 0, 0)
+healthStatusDisplay.Position = UDim2.new(0.5, -90, 0, -100)
 healthStatusDisplay.Text = "Health: 0/0"
 healthStatusDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
 healthStatusDisplay.BackgroundTransparency = 1
 healthStatusDisplay.Visible = false
-healthStatusDisplay.Parent = screenGui
+healthStatusDisplay.Parent = frame
 
 -- Health Regeneration Script
 local regenEnabled = false
@@ -170,7 +177,7 @@ slider.FocusLost:Connect(function()
     end
 end)
 
--- Make GUI draggable
+-- Make frame draggable
 local dragging
 local dragInput
 local dragStart
@@ -178,14 +185,14 @@ local startPos
 
 local function update(input)
     local delta = input.Position - dragStart
-    scrollFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 
-scrollFrame.InputBegan:Connect(function(input)
+frame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
-        startPos = scrollFrame.Position
+        startPos = frame.Position
 
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
@@ -195,7 +202,7 @@ scrollFrame.InputBegan:Connect(function(input)
     end
 end)
 
-scrollFrame.InputChanged:Connect(function(input)
+frame.InputChanged:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
         dragInput = input
     end
@@ -240,17 +247,17 @@ local minimized = false
 minimizeButton.MouseButton1Click:Connect(function()
     minimized = not minimized
     if minimized then
-        scrollFrame:TweenSize(UDim2.new(0, 200, 0, 50), "Out", "Quad", 0.3, true)
+        frame:TweenSize(UDim2.new(0, 200, 0, 50), "Out", "Quad", 0.3, true)
         minimizeButton.Text = "+"
-        for _, child in ipairs(scrollFrame:GetChildren()) do
+        for _, child in ipairs(frame:GetChildren()) do
             if child ~= minimizeButton then
                 child.Visible = false
             end
         end
     else
-        scrollFrame:TweenSize(UDim2.new(0, 200, 0, 250), "Out", "Quad", 0.3, true)
+        frame:TweenSize(UDim2.new(0, 200, 0, 300), "Out", "Quad", 0.3, true)
         minimizeButton.Text = "-"
-        for _, child in ipairs(scrollFrame:GetChildren()) do
+        for _, child in ipairs(frame:GetChildren()) do
             child.Visible = true
         end
     end
