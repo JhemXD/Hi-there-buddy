@@ -117,7 +117,7 @@ Tittle.BorderColor3 = Color3.fromRGB(0, 0, 0)
 Tittle.BorderSizePixel = 0
 Tittle.Size = UDim2.new(0, 265, 0, 25)
 Tittle.Font = Enum.Font.SourceSans
-Tittle.Text = "Super Ring Part V1 By Rip_IKASI"
+Tittle.Text = "Super Ring Part v3 by JhemXD"
 Tittle.TextColor3 = Color3.fromRGB(0, 0, 0)
 Tittle.TextSize = 14.000
 
