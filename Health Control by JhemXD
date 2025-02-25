@@ -92,6 +92,27 @@ healthStatusDisplay.BackgroundTransparency = 1
 healthStatusDisplay.Visible = false
 healthStatusDisplay.Parent = frame
 
+-- Create Health Amount Input
+local healthAmountInput = Instance.new("TextBox")
+healthAmountInput.Size = UDim2.new(0, 180, 0, 30)
+healthAmountInput.Position = UDim2.new(0.5, -90, 1.0, 10)
+healthAmountInput.PlaceholderText = "Enter Health Amount"
+healthAmountInput.Parent = scrollFrame
+
+-- Create Player Name Input
+local playerNameInput = Instance.new("TextBox")
+playerNameInput.Size = UDim2.new(0, 180, 0, 30)
+playerNameInput.Position = UDim2.new(0.5, -90, 1.2, 10)
+playerNameInput.PlaceholderText = "Enter Player Name"
+playerNameInput.Parent = scrollFrame
+
+-- Create Heal Button
+local healButton = Instance.new("TextButton")
+healButton.Size = UDim2.new(0, 180, 0, 50)
+healButton.Position = UDim2.new(0.5, -90, 1.4, 10)
+healButton.Text = "Heal"
+healButton.Parent = scrollFrame
+
 -- Health Regeneration Script
 local regenEnabled = false
 local instantRegen = false
@@ -149,10 +170,25 @@ local function updateHealthStatus()
     end
 end
 
+local function healPlayer()
+    local playerName = playerNameInput.Text
+    local healthAmount = tonumber(healthAmountInput.Text)
+    if playerName and healthAmount then
+        local player = Players:FindFirstChild(playerName)
+        if player and player.Character then
+            local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.Health = math.min(humanoid.Health + healthAmount, humanoid.MaxHealth)
+            end
+        end
+    end
+end
+
 instantRegenButton.MouseButton1Click:Connect(instantRegenFunc)
 regenButton.MouseButton1Click:Connect(toggleHealthRegen)
 setMaxHealthButton.MouseButton1Click:Connect(setMaxHealth)
 healthStatusToggle.MouseButton1Click:Connect(toggleHealthStatus)
+healButton.MouseButton1Click:Connect(healPlayer)
 
 RunService.Heartbeat:Connect(function()
     if regenEnabled then
