@@ -1,0 +1,108 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+
+local localPlayer = Players.LocalPlayer
+local camera = game.Workspace.CurrentCamera
+
+local camLockActive = false
+local closestNPC = nil
+local highlight = nil
+
+local function getClosestNPC()
+    local closestDistance = 300
+    local closest = nil
+    for _, npc in pairs(game.Workspace.NPCs:GetChildren()) do
+        if npc:FindFirstChild("HumanoidRootPart") and npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 then
+            local distance = (npc.HumanoidRootPart.Position - localPlayer.Character.HumanoidRootPart.Position).magnitude
+            if distance < closestDistance then
+                closestDistance = distance
+                closest = npc
+            end
+        end
+    end
+    return closest
+end
+
+local function highlightNPC(npc)
+    if highlight then
+        highlight:Destroy()
+    end
+    highlight = Instance.new("SelectionBox")
+    highlight.Adornee = npc
+    highlight.LineThickness = 0.1
+    highlight.Color3 = Color3.fromRGB(255, 0, 0) -- Customize highlight color
+    highlight.Parent = npc
+end
+
+local function onCamLockToggled()
+    camLockActive = not camLockActive
+    if camLockActive then
+        closestNPC = getClosestNPC()
+        if closestNPC then
+            highlightNPC(closestNPC)
+        end
+    else
+        camera.CameraSubject = localPlayer.Character.Humanoid
+        if highlight then
+            highlight:Destroy()
+        end
+    end
+end
+
+local function onMinimizeToggled()
+    script.Parent.Parent.Frame.Visible = not script.Parent.Parent.Frame.Visible
+end
+
+RunService.RenderStepped:Connect(function()
+    if camLockActive and closestNPC and closestNPC:FindFirstChild("HumanoidRootPart") then
+        camera.CameraSubject = closestNPC.HumanoidRootPart
+    else
+        closestNPC = getClosestNPC()
+        if closestNPC then
+            highlightNPC(closestNPC)
+        end
+    end
+end)
+
+-- GUI Setup
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = localPlayer:WaitForChild("PlayerGui")
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 200, 0, 100)
+Frame.Position = UDim2.new(0, 10, 0, 10)
+Frame.BackgroundColor3 = Color3.fromRGB(0, 230, 230) -- Customize frame background color
+Frame.Parent = ScreenGui
+Frame.Visible = true
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = Frame
+
+local camLockButton = Instance.new("TextButton")
+camLockButton.Size = UDim2.new(0, 180, 0, 40)
+camLockButton.Position = UDim2.new(0, 10, 0, 10)
+camLockButton.Text = "Toggle CamLock"
+camLockButton.BackgroundColor3 = Color3.fromRGB(102, 255, 102) -- Customize button background color
+camLockButton.Parent = Frame
+
+local UICornerButton1 = Instance.new("UICorner")
+UICornerButton1.CornerRadius = UDim.new(0, 10)
+UICornerButton1.Parent = camLockButton
+
+camLockButton.MouseButton1Click:Connect(onCamLockToggled)
+
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Size = UDim2.new(0, 180, 0, 40)
+minimizeButton.Position = UDim2.new(0, 10, 0, 60)
+minimizeButton.Text = "Minimize"
+minimizeButton.BackgroundColor3 = Color3.fromRGB(51, 153, 255) -- Customize button background color
+minimizeButton.Parent = Frame
+
+local UICornerButton2 = Instance.new("UICorner")
+UICornerButton2.CornerRadius = UDim.new(0, 10)
+UICornerButton2.Parent = minimizeButton
+
+minimizeButton.MouseButton1Click:Connect(onMinimizeToggled)
