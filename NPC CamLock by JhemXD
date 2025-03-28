@@ -35,6 +35,16 @@ local function highlightNPC(npc)
     highlight.Parent = npc
 end
 
+local function updateCamLockButton()
+    if camLockActive then
+        camLockButton.Text = "Disable NPC CamLock"
+        camLockButton.BackgroundColor3 = Color3.fromRGB(255, 102, 102)
+    else
+        camLockButton.Text = "Enable NPC CamLock"
+        camLockButton.BackgroundColor3 = Color3.fromRGB(102, 255, 102)
+    end
+end
+
 local function onCamLockToggled()
     camLockActive = not camLockActive
     if camLockActive then
@@ -48,6 +58,7 @@ local function onCamLockToggled()
             highlight:Destroy()
         end
     end
+    updateCamLockButton()
 end
 
 local function onMinimizeToggled()
@@ -88,7 +99,7 @@ UICorner.Parent = Frame
 local camLockButton = Instance.new("TextButton")
 camLockButton.Size = UDim2.new(0, 180, 0, 40)
 camLockButton.Position = UDim2.new(0, 10, 0, 10)
-camLockButton.Text = "Toggle NPC CamLock"
+camLockButton.Text = "Enable NPC CamLock"
 camLockButton.BackgroundColor3 = Color3.fromRGB(102, 255, 102)
 camLockButton.Parent = Frame
 
@@ -110,3 +121,6 @@ UICornerButton2.CornerRadius = UDim.new(0, 10)
 UICornerButton2.Parent = minimizeButton
 
 minimizeButton.MouseButton1Click:Connect(onMinimizeToggled)
+
+-- Initialize button state
+updateCamLockButton()
