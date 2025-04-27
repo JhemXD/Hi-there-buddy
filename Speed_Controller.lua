@@ -31,11 +31,11 @@ MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 MainFrame.BorderSizePixel = 0
 MainFrame.Position = UDim2.new(0.3318, 0, 0.2889, 0)
 MainFrame.Size = UDim2.new(0, 265, 0, 150)
-MainFrame.CanvasSize = UDim2.new(0, 0, 0, 200)
+MainFrame.CanvasSize = UDim2.new(0, 0, 0, 300) -- Adjusted CanvasSize for smooth scrolling
 MainFrame.ScrollBarThickness = 10
-
-local UICorner = Instance.new("UICorner")
-UICorner.Parent = MainFrame
+local MainFrameCorner = Instance.new("UICorner")
+MainFrameCorner.CornerRadius = UDim.new(0, 10)
+MainFrameCorner.Parent = MainFrame
 
 local Tittle = Instance.new("TextLabel")
 Tittle.Name = "Tittle"
@@ -48,9 +48,9 @@ Tittle.Font = Enum.Font.SourceSans
 Tittle.Text = "Speed Controller by JhemXD"
 Tittle.TextColor3 = Color3.fromRGB(0, 0, 0)
 Tittle.TextSize = 14.000
-
-local UICorner_2 = Instance.new("UICorner")
-UICorner_2.Parent = Tittle
+local TitleCorner = Instance.new("UICorner")
+TitleCorner.CornerRadius = UDim.new(0, 10)
+TitleCorner.Parent = Tittle
 
 local Watermark = Instance.new("TextLabel")
 Watermark.Name = "Watermark"
@@ -64,9 +64,9 @@ Watermark.Font = Enum.Font.SourceSans
 Watermark.Text = "Speed Controller By JhemXD"
 Watermark.TextColor3 = Color3.fromRGB(0, 0, 0)
 Watermark.TextSize = 14.000
-
-local UICorner_3 = Instance.new("UICorner")
-UICorner_3.Parent = Watermark
+local WatermarkCorner = Instance.new("UICorner")
+WatermarkCorner.CornerRadius = UDim.new(0, 10)
+WatermarkCorner.Parent = Watermark
 
 local MinimizeButton = Instance.new("TextButton")
 MinimizeButton.Name = "MinimizeButton"
@@ -81,10 +81,8 @@ MinimizeButton.Font = Enum.Font.SourceSans
 MinimizeButton.Text = "-"
 MinimizeButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 MinimizeButton.TextSize = 51.000
-
--- Round the minimize button
 local MinimizeCorner = Instance.new("UICorner")
-MinimizeCorner.CornerRadius = UDim.new(0, 15)
+MinimizeCorner.CornerRadius = UDim.new(0, 10)
 MinimizeCorner.Parent = MinimizeButton
 
 -- Minimize functionality
@@ -127,6 +125,9 @@ SpeedInput.Text = ""
 SpeedInput.PlaceholderText = "Enter Walkspeed"
 SpeedInput.TextColor3 = Color3.fromRGB(0, 0, 0)
 SpeedInput.TextSize = 14.000
+local SpeedInputCorner = Instance.new("UICorner")
+SpeedInputCorner.CornerRadius = UDim.new(0, 10)
+SpeedInputCorner.Parent = SpeedInput
 
 local SetSpeedButton = Instance.new("TextButton")
 SetSpeedButton.Name = "SetSpeedButton"
@@ -138,6 +139,9 @@ SetSpeedButton.Font = Enum.Font.SourceSans
 SetSpeedButton.Text = "Set Walkspeed"
 SetSpeedButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 SetSpeedButton.TextSize = 14.000
+local SetSpeedButtonCorner = Instance.new("UICorner")
+SetSpeedButtonCorner.CornerRadius = UDim.new(0, 10)
+SetSpeedButtonCorner.Parent = SetSpeedButton
 
 -- Input Field for Adding to Walkspeed
 local AddSpeedLabel = Instance.new("TextLabel")
@@ -163,6 +167,9 @@ AddSpeedInput.Text = ""
 AddSpeedInput.PlaceholderText = "Enter Value to Add"
 AddSpeedInput.TextColor3 = Color3.fromRGB(0, 0, 0)
 AddSpeedInput.TextSize = 14.000
+local AddSpeedInputCorner = Instance.new("UICorner")
+AddSpeedInputCorner.CornerRadius = UDim.new(0, 10)
+AddSpeedInputCorner.Parent = AddSpeedInput
 
 local AddSpeedButton = Instance.new("TextButton")
 AddSpeedButton.Name = "AddSpeedButton"
@@ -174,6 +181,9 @@ AddSpeedButton.Font = Enum.Font.SourceSans
 AddSpeedButton.Text = "Add to Walkspeed"
 AddSpeedButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 AddSpeedButton.TextSize = 14.000
+local AddSpeedButtonCorner = Instance.new("UICorner")
+AddSpeedButtonCorner.CornerRadius = UDim.new(0, 10)
+AddSpeedButtonCorner.Parent = AddSpeedButton
 
 -- Button Functionality
 SetSpeedButton.MouseButton1Click:Connect(function()
@@ -189,5 +199,45 @@ AddSpeedButton.MouseButton1Click:Connect(function()
 	if addSpeed and Humanoid then
 		Humanoid.WalkSpeed = Humanoid.WalkSpeed + addSpeed
 		playSound("12221967")
+	end
+end)
+
+-- Make GUI draggable
+local dragging = false
+local dragInput, dragStart, startPos
+
+local function updateDrag(input)
+	local delta = input.Position - dragStart
+	MainFrame.Position = UDim2.new(
+		startPos.X.Scale,
+		startPos.X.Offset + delta.X,
+		startPos.Y.Scale,
+		startPos.Y.Offset + delta.Y
+	)
+end
+
+MainFrame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = MainFrame.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+MainFrame.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		updateDrag(input)
 	end
 end)
